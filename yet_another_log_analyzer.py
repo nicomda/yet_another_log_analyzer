@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # coding: utf-8
 '''
-Yet Another Log Analyzer
+Yet Another Log Analyzer\n
 Author: Nicolás Moral
 '''
 import argparse
