@@ -10,6 +10,7 @@ import re
 from collections import Counter
 import glob
 import datetime
+import operator
 
 
 def argumentParser(arguments: any) -> any:
@@ -97,7 +98,7 @@ def parseFile(input_path: str) -> list:
     return lines
 
 
-def logProcessor(input_path: str) -> None:
+def logProcessor(args: argumentParser) -> dict:
     '''
     Normalizes filename, if file, reads it and process. If directory, reads each file and process.
     Calculates More & Less frequent IP's
@@ -112,10 +113,11 @@ def logProcessor(input_path: str) -> None:
     epoch_list = []
     epoch_final = []  # List to store oldest and newer epoch of each file
     max_bytes = 0  # Integer to get sum of all bytes
-    events_number = 0  # Integer to store total count of events
-
+    event_count = 0  # Integer to store total count of events
+    results = {}  # Dictionary to return the result array
     # Handling any typical OS filepath
-    normalized_path = os.path.normpath(input_path)
+    normalized_path = os.path.normpath(args.input)
+
     # If it's a directory, fill file_list with any .log match
     if os.path.isdir(normalized_path):
         file_list = glob.glob(f"{normalized_path}/*.log", recursive=True)
@@ -133,13 +135,15 @@ def logProcessor(input_path: str) -> None:
             for elements in file_elements:
                 # Preparing IP address list for later calculation
                 ips_list.append(elements['ipaddress'])
+
                 # Preparing epoch list for later calculation
                 epoch_list.append(elements['timestamp'])
+
                 # Sum of header & response bytes to get the maximum
                 max_bytes += int(elements['headerbytes'])
                 max_bytes += int(elements['responsebytes'])
-                # Counting events (1 event per element)
-                events_number += 1
+
+                event_count += 1  # Counting events (1 event per element)
             # Calculating more & less frequent IP's
             ip_more_frequent, ip_less_frequent = calculateMostAndLessFrequentIp(
                 ips_list)
@@ -148,18 +152,29 @@ def logProcessor(input_path: str) -> None:
             # Adding newest and oldest time of a file to final epoch list
             epoch_final.append(calculateNewestTime(epoch_list))
             epoch_final.append(calculateOldestTime(epoch_list))
-
-        print(calculateEventsPerSecond(epoch_final, events_number))
+        # Once all files are read, it's time to generate the results
+        if args.mfip:
+            results["mfip"] = max(ips_max.items(),
+                                  key=operator.itemgetter(1))[0]
+        if args.lfip:
+            results["lfip"] = min(ips_min.items(),
+                                  key=operator.itemgetter(1))[0]
+        if args.eps:
+            results["eps"] = calculateEventsPerSecond(
+                epoch_final, event_count)
+        if args.bytes:
+            results["bytes"] = max_bytes
     else:
         print(
             f"The path passed as argument is not a valid file or directory: {input_path}")
+    return results
 
 
 def main(arguments: any) -> None:
     args = argumentParser(arguments)
-    results = logProcessor(args.input)
-    # TODO Restrict calculation depending on the arguments selected
+    results = logProcessor(args)
     # TODO Return results dictionary to main function and generate a json with them
+    print (results)
 
 
 if __name__ == "__main__":
