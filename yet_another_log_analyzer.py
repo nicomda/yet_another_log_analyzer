@@ -11,6 +11,7 @@ from collections import Counter
 import glob
 import datetime
 import operator
+import json
 
 
 def argumentParser(arguments: any) -> any:
@@ -30,7 +31,7 @@ def argumentParser(arguments: any) -> any:
                           help="Events per second")
     optional.add_argument("--bytes", action="store_true",
                           help="Total amount of bytes exchanged")
-    optional.add_argument("-o""--output", default="output.json",
+    optional.add_argument("-o", "--output", default="output.json",
                           help="Path of the file where you want to store the output")
     # Adds back into the stack optional arguments, but this time after the required.
     parser._action_groups.append(optional)
@@ -169,12 +170,20 @@ def logProcessor(args: argumentParser) -> dict:
             f"The path passed as argument is not a valid file or directory: {input_path}")
     return results
 
+def writeDict2JSONFile(output_path: str, data: dict) -> None:
+    try:
+        normalized_path = os.path.normpath(output_path)
+        with open(normalized_path, "w") as json_file:
+            json.dump(data, json_file)
+        print(f"You can find the resulting .json at: {normalized_path}")
+    except Exception as e:
+        print("Data couldn't be written into a JSON file")
 
 def main(arguments: any) -> None:
     args = argumentParser(arguments)
     results = logProcessor(args)
-    # TODO Return results dictionary to main function and generate a json with them
-    print (results)
+    print(results)
+    writeDict2JSONFile(args.output, results)
 
 
 if __name__ == "__main__":
