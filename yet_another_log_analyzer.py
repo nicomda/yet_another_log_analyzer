@@ -21,7 +21,7 @@ def argumentParser(arguments: any) -> any:
     # Pops element from parser stack in order to put required argument first
     optional = parser._action_groups.pop()
     required = parser.add_argument_group('required arguments')
-    required.add_argument("-i", "--input", required=True,
+    required.add_argument("-i", "--input", default=".",
                           help="Path to one plain-text file, or a directory")
     optional.add_argument("--mfip", action="store_true",
                           help="Most frequent IP")

@@ -16,16 +16,18 @@ python3 yet_another_log_analyzer.py <PARAMETERS>
 git clone https://github.com/nicomda/yet_another_log_analyzer.git 
 cd yet_another_log_analyzer
 docker build --tag yala . #Build docker image
-docker run -it --name yala -v <host_input_path>:/data yala --input . <OPTIONAL_PARAMETERS> 
+docker run -it --name yala -v <HOST_INPUT_PATH>:/data yala <OPTIONAL_PARAMETERS> 
 ```
 Parameters
 ======
-| Parameter               | Description                                                                | Required |
-|-------------------------|----------------------------------------------------------------------------|----------|
-| -i INPUT, --input INPUT | Path to one plain-text file, or a directory. All .log files will be read                | Yes      |
-| -h, --help              | show help message and exit                                                 | No       |
-| --mfip                  | Add most frequent IP to output (default: False)                                      | No       |
-| --lfip                  | Add less frequent IP to output (default: False)                                          | No       |
-| --eps                   | Add events per second to output (default: False)                                         | No       |
-| --bytes                 | Add total amount of bytes exchanged (default: False)                           | No       |
-| -o --output OUTPUT      | Path of the file where you want to store the output (default: output.json) | No       |
+| Parameter               | Description                                                                
+|-------------------------|----------------------------------------------------------------------------
+| -i INPUT, --input INPUT | Path to one plain-text file, or a directory. All .log files will be read    
+| -h, --help              | show help message and exit                                                 
+| --mfip                  | Add most frequent IP to output (default: False)                             
+| --lfip                  | Add less frequent IP to output (default: False)                             
+| --eps                   | Add events per second to output (default: False)                            
+| --bytes                 | Add total amount of bytes exchanged (default: False)                        
+| -o --output OUTPUT      | Path of the file where you want to store the output (default: output.json)
+
+*All parameters are optional or they have a default value
