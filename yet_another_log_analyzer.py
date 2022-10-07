@@ -9,9 +9,9 @@ import os
 import re
 from collections import Counter
 import glob
-import datetime
 import operator
 import json
+import src.utils as utils
 
 
 def argumentParser(arguments: any) -> any:
@@ -37,31 +37,6 @@ def argumentParser(arguments: any) -> any:
     parser._action_groups.append(optional)
     args = parser.parse_args(arguments)
     return args
-
-
-def calculateMostAndLessFrequentIp(ips: list) -> list:
-    '''Use collections to get the most and less frequent ip'''
-    # Assumption: More than 1 IP could match any of the filters, but we'll consider first and last element of Counter(Dict subclass) to simplify
-    occurences = Counter(ips)
-    return occurences.most_common()[0], occurences.most_common()[-1]
-
-
-def calculateOldestTime(epochs: list) -> str:
-    epochs.sort()
-    return epochs[0]
-
-
-def calculateNewestTime(epochs: list) -> str:
-    epochs.sort()
-    return epochs[-1]
-
-
-def calculateEventsPerSecond(epochs: list, events: int) -> float:
-    epochs.sort()
-    oldest_date = datetime.datetime.fromtimestamp(float(epochs[0]))
-    newest_date = datetime.datetime.fromtimestamp(float(epochs[-1]))
-    time_difference_in_seconds = (newest_date-oldest_date).total_seconds()
-    return float(events)/time_difference_in_seconds
 
 
 def parseFile(input_path: str) -> list:
@@ -146,13 +121,13 @@ def logProcessor(args: argumentParser) -> dict:
 
                 event_count += 1  # Counting events (1 event per element)
             # Calculating more & less frequent IP's
-            ip_more_frequent, ip_less_frequent = calculateMostAndLessFrequentIp(
+            ip_more_frequent, ip_less_frequent = utils.calculateMostAndLessFrequentIp(
                 ips_list)
             ips_max[f"{ip_more_frequent[0]}"] = ip_more_frequent[1]
             ips_min[f"{ip_less_frequent[0]}"] = ip_less_frequent[1]
             # Adding newest and oldest time of a file to final epoch list
-            epoch_final.append(calculateNewestTime(epoch_list))
-            epoch_final.append(calculateOldestTime(epoch_list))
+            epoch_final.append(utils.calculateNewestTime(epoch_list))
+            epoch_final.append(utils.calculateOldestTime(epoch_list))
         # Once all files are read, it's time to generate the results
         if args.mfip:
             results["mfip"] = max(ips_max.items(),
@@ -161,16 +136,18 @@ def logProcessor(args: argumentParser) -> dict:
             results["lfip"] = min(ips_min.items(),
                                   key=operator.itemgetter(1))[0]
         if args.eps:
-            results["eps"] = calculateEventsPerSecond(
+            results["eps"] = utils.calculateEventsPerSecond(
                 epoch_final, event_count)
         if args.bytes:
             results["bytes"] = max_bytes
     else:
         print(
-            f"The path passed as argument is not a valid file or directory: {input_path}")
+            f"The path passed as argument is not a valid file or directory: {normalized_path}")
     return results
 
+
 def writeDict2JSONFile(output_path: str, data: dict) -> None:
+    '''Writes dictionary data into a JSON file in the specified output path'''
     try:
         normalized_path = os.path.normpath(output_path)
         with open(normalized_path, "w") as json_file:
@@ -178,6 +155,7 @@ def writeDict2JSONFile(output_path: str, data: dict) -> None:
         print(f"You can find the resulting .json at: {normalized_path}")
     except Exception as e:
         print("Data couldn't be written into a JSON file")
+
 
 def main(arguments: any) -> None:
     args = argumentParser(arguments)
