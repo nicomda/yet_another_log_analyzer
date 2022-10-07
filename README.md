@@ -2,7 +2,24 @@
 This tool analizes the content of log files, it has diferent operations to get usefull info. It takes a file/directory as input an processes    
 it generating a json output file.
 
-### PARAMETERS
+How to use it
+======
+### Standard Way
+```bash
+git clone https://github.com/nicomda/yet_another_log_analyzer.git 
+cd yet_another_log_analyzer
+chmod +x yet_another_log_analyzer.py
+python3 yet_another_log_analyzer.py <PARAMETERS> 
+```
+### Docker Way
+```bash
+git clone https://github.com/nicomda/yet_another_log_analyzer.git 
+cd yet_another_log_analyzer
+docker build --tag yala . #Build docker image
+docker run -it --name yala -v <host_input_path>:/data yala --input . <OPTIONAL_PARAMETERS> 
+```
+Parameters
+======
 | Parameter               | Description                                                                | Required |
 |-------------------------|----------------------------------------------------------------------------|----------|
 | -i INPUT, --input INPUT | Path to one plain-text file, or a directory. All .log files will be read                | Yes      |
