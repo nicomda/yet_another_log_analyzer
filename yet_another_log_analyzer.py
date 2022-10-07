@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 # coding: utf-8
 '''
 Yet Another Log Analyzer. This tool analizes the content of log files, it has diferent operations to get usefull info. It takes a file/directory as input an processes it generating a json output file. 
