@@ -7,7 +7,6 @@ import argparse
 import sys
 import os
 import re
-from collections import Counter
 import glob
 import operator
 import json
