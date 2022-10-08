@@ -31,3 +31,12 @@ Parameters
 | -o --output OUTPUT      | Path of the file where you want to store the output (default: output.json)
 
 *All parameters are optional or they have a default value
+
+How to test
+======
+Pytest is being used for testing purposes. To test the app, follow the steps below
+```bash
+cd test
+pip3 install pytest==7.1.3 #Be sure that you have libraries added to PATH
+pytest --verbose
+```
