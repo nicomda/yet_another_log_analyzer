@@ -1,6 +1,6 @@
 # Yet Another Log Analyzer
-This tool analizes the content of log files, it has diferent operations to get usefull info. It takes a file/directory as input an processes    
-it generating a json output file.
+This tool analyzes the content of log files, it has different operations to get usefull info. It takes a file/directory as input an processes    
+it generating a json output file with the options selected.
 
 How to use it
 ======
